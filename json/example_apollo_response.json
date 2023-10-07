@@ -1,0 +1,28 @@
+[
+	{
+		"data": {
+			"product": {
+				"currentUserInfos": {
+					"dateDone": null,
+					"hasStartedReview": false,
+					"isCurrent": false,
+					"id": 99999999,
+					"isDone": true,
+					"isListed": true,
+					"isRecommended": false,
+					"isRejected": false,
+					"isReviewed": false,
+					"isWished": false,
+					"productId": 488559,
+					"rating": 10,
+					"userId": 999999,
+					"numberEpisodeDone": 0,
+					"lastEpisodeDone": null,
+					"gameSystem": null,
+					"review": null,
+					"__typename": "ProductUserInfos"
+				}
+			}
+		}
+	}
+]

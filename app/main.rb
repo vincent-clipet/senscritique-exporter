@@ -2,6 +2,7 @@ require 'yaml'
 require 'active_record'
 require 'active_model'
 require_relative 'utils/sc_utils'
+require_relative 'config/cookies'
 
 
 
@@ -30,15 +31,13 @@ ActiveRecord::Base.establish_connection(db_config)
 ###################
 
 class Movie < ActiveRecord::Base
-  # include ActiveModel::Validations
-  enum :status, [:default, :rated, :watched, :watchlisted]
+  enum :status, [:default, :rated, :watched, :wishlisted]
   validates_presence_of :title, :sc_url_id, :sc_url_name
-  validates_uniqueness_of :sc_url_id, :sc_url_name, :imdb_id
+  validates_uniqueness_of :sc_url_id, :sc_url_name
   validates_numericality_of :sc_url_id, { only_integer: true }
   validates_numericality_of :duration, { only_integer: true, allow_nil: true }
-  validates_numericality_of :rating, { only_integer: true, allow_nil: true }
-  validates_inclusion_of :rating, :in => 0..10
-  validates_format_of :imdb_id, with: /\Att\d\d\d\d\d\d\d\z/
+  validates :rating, numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 10 }, allow_nil: true
+  validates :imdb_id, format: { with: /\Att\d+\z/ }, allow_blank: true, allow_nil: true, uniqueness: true
 end
 
 unless Movie.table_exists? then
@@ -81,4 +80,28 @@ end
 # })
 # movie.save!
 
-SenscritiqueUtils.parse_movie_from_wiki("bienvenue_a_gattaca", 488559)
+
+last_page = SenscritiqueUtils.get_last_page(Cookies::USERNAME)
+
+(1..last_page).each do | page_number |
+  page = SenscritiqueUtils.get_movies_personal_rating_from_page(Cookies::USERNAME, page_number)
+
+  sleep(0.2)
+
+  page.each do |k, v|
+    puts "> #{v[:title]}"
+    movie_from_wiki = SenscritiqueUtils.get_movie_from_wiki(v[:sc_url_name], v[:sc_url_id])
+    hashed_movie = v.merge(movie_from_wiki)
+
+    old_movie = Movie.where(sc_url_id: v[:sc_url_id]).first
+    if (old_movie) then
+      old_movie.update!(hashed_movie)
+      puts ">>> updated"
+    else
+      movie = Movie.new(hashed_movie)
+      movie.save!
+      puts ">>> created"
+    end
+    sleep(0.2)
+  end
+end

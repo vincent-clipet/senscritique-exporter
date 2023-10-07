@@ -60,5 +60,6 @@ build-iPhoneSimulator/
 /.ruby-lsp
 
 /lab
-/db/*.db
-/app/config/cookies.rb
+/app/db/*.db*
+/app/config/*.yaml
+!/app/config/database.yaml

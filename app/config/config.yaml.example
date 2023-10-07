@@ -1,0 +1,16 @@
+# Your SensCritique username 
+username: ''
+
+# These cookies are required to access wiki pages
+cookies:
+  SC_AUTH: '' # 32-char hexadecimal string
+  SC_AUTH_ID: '' # very long text string
+
+# HTTP requests parameters
+http:
+  request_delay: 0.2 # delay in seconds between request, we don't want to get IP-banned !
+
+# Database configuration
+database:
+  adapter: 'sqlite3'
+  database: './db/sc_export.db'

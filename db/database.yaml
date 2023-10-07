@@ -1,3 +1,0 @@
-# database.yaml
-adapter: 'sqlite3'
-database: './db/sc_export.db'

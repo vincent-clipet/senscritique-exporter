@@ -57,5 +57,10 @@ build-iPhoneSimulator/
 
 
 
+/sorbet
+/.ruby-lsp
+/bin
+
 /lab
 /db/*.db
+config/cookies.rb

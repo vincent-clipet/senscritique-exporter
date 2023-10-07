@@ -1,0 +1,8 @@
+module Cookies
+
+	SC = {
+		"SC_AUTH_ID" => "",
+		"SC_AUTH" => ""
+	}
+
+end

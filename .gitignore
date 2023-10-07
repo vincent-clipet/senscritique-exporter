@@ -61,4 +61,4 @@ build-iPhoneSimulator/
 
 /lab
 /db/*.db
-config/cookies.rb
+/app/config/cookies.rb

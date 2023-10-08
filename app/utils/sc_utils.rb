@@ -115,6 +115,7 @@ private
 	def self.parse_date(date_str)
 		return nil if date_str.nil?
 		return Date.strptime(date_str, '%Y') if date_str =~ /^\d{4}$/ # sometimes, date is just a year
+		return Date.strptime(date_str, '%m/%Y') if date_str =~ /^\d{2}\/\d{4}$/ # sometimes, there's also a month
 		return Date.strptime(date_str, '%d/%m/%Y')
 	end
 

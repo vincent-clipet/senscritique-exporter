@@ -1,33 +1,31 @@
-class Movie < ActiveRecord::Base
+class Serie < ActiveRecord::Base
   enum :status, [:default, :rated, :watched, :wishlisted]
   validates_presence_of :title, :sc_url_id, :sc_url_name
   validates_uniqueness_of :sc_url_id
   validates_numericality_of :sc_url_id, { only_integer: true }
-  validates_numericality_of :duration, { only_integer: true, allow_nil: true }
+  validates_numericality_of :seasons, { only_integer: true, allow_nil: true }
   validates :rating, numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 10 }, allow_nil: true
-  validates :imdb_id, format: { with: /\Att\d+\z/ }, allow_blank: true, allow_nil: true, uniqueness: true
 end
 
 
 
-class Movies < Senscritique
+class Series < Senscritique
 
   def self.init()
-    unless Movie.table_exists? then
+    unless Serie.table_exists? then
       ActiveRecord::Schema.define do
-        create_table :movies do |t|
+        create_table :series do |t|
           t.string :title, index: true
           t.integer :sc_url_id, index: true
           t.string :sc_url_name, index: true
-          t.string :imdb_id, index: true
-          t.string :director, index: true
+          t.string :creator, index: true
           t.string :country, index: true
           t.integer :rating, index: true
           t.integer :status, default: 0, index: true
           t.string :category, index: true
           t.string :original_title
           t.date :release_date
-          t.integer :duration
+          t.integer :seasons
         end
       end
     end
@@ -37,11 +35,11 @@ class Movies < Senscritique
   def self.run()
     updated = 0
     created = 0
-    last_page = get_last_page("films")
+    last_page = get_last_page("series")
 
     (1..last_page).each do | page_number |
-      puts "----- Movies - page #{page_number}/#{last_page} -----"
-      page = ratings_for("films", page_number)
+      puts "----- Series - page #{page_number}/#{last_page} -----"
+      page = ratings_for("series", page_number)
 
       sleep(@@DELAY)
 
@@ -49,13 +47,13 @@ class Movies < Senscritique
         from_wiki = wiki_for(v[:sc_url_name], v[:sc_url_id])
         hashed = v.merge(from_wiki)
 
-        old = Movie.where(sc_url_id: v[:sc_url_id]).first
+        old = Serie.where(sc_url_id: v[:sc_url_id]).first
         if (old) then
           old.update!(hashed)
           updated += 1
           action = "updated"
         else
-          movie = Movie.create!(hashed)
+          serie = Serie.create!(hashed)
           created += 1
           action = "created"
         end
@@ -66,10 +64,9 @@ class Movies < Senscritique
     end
 
     puts "============================================"
-    puts ">>> #{created} new movies"
-    puts ">>> #{updated} updated movies"
+    puts ">>> #{created} new series"
+    puts ">>> #{updated} updated series"
     puts "============================================"
-    puts
   end
 
 
@@ -86,13 +83,12 @@ class Movies < Senscritique
       :title => info_list[0].at_css(".ped-results-item > .ped-results-value")&.text&.strip,
       :sc_url_id => url_id.to_i,
       :sc_url_name => url_name,
-      :imdb_id => info_list[5].at_css(".ped-results-item > .ped-results-value")&.text&.strip,
-      :director => info_list[3].at_css(".ped-results-item > .ped-results-value")&.text&.strip,
-      :country => info_list[10].at_css(".ped-results-item > .ped-results-value")&.text&.strip,
+      :creator => info_list[3].at_css(".ped-results-item > .ped-results-value")&.text&.strip,
+      :country => info_list[15].at_css(".ped-results-item > .ped-results-value")&.text&.strip,
       :category => info_list[2].at_css(".ped-results-item > .ped-results-value")&.text&.strip,
       :original_title => info_list[1].at_css(".ped-results-item > .ped-results-value")&.text&.strip,
-      :release_date => parse_date(info_list[6].at_css(".ped-results-item > .ped-results-value")&.text&.strip),
-      :duration => info_list[11].at_css(".ped-results-item > .ped-results-value")&.text&.strip&.split(" ")&.first&.to_i
+      :release_date => parse_date(info_list[5].at_css(".ped-results-item > .ped-results-value")&.text&.strip),
+      :seasons => info_list[13].at_css(".ped-results-item > .ped-results-value")&.text&.strip&.split(" ")&.first&.to_i
     }
     return ret
   end

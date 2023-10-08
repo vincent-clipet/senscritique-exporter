@@ -3,6 +3,7 @@ require 'active_record'
 require 'active_model'
 require_relative 'utils/senscritique'
 require_relative 'utils/movies'
+require_relative 'utils/series'
 
 
 
@@ -14,6 +15,7 @@ Dir.chdir("app")
 
 CONFIG = YAML::load(File.open('./config/config.yaml'))
 COOKIES = CONFIG["cookies"].map { |key, value| "#{key}=#{value}" } .join('; ')
+EXPORT = CONFIG["export"]
 
 
 
@@ -48,5 +50,12 @@ ActiveRecord::Base.establish_connection(CONFIG["database"])
 Senscritique.init(CONFIG)
 Http.init(COOKIES)
 
-Movies.init()
-Movies.run()
+if (EXPORT["movies"]) then
+  Movies.init()
+  Movies.run()
+end
+
+if (EXPORT["series"]) then
+  Series.init()
+  Series.run()
+end

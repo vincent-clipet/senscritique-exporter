@@ -1,5 +1,5 @@
 class Book < ActiveRecord::Base
-  enum :status, [:default, :rated, :read, :wishlisted]
+  enum :status, [:default, :rated, :watched, :wishlisted]
   validates_presence_of :title, :sc_url_id, :sc_url_name
   validates_uniqueness_of :sc_url_id
   validates_numericality_of :sc_url_id, { only_integer: true }

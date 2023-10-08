@@ -5,6 +5,7 @@ require_relative 'utils/senscritique'
 require_relative 'utils/movies'
 require_relative 'utils/series'
 require_relative 'utils/books'
+require_relative 'utils/comics'
 
 
 
@@ -64,4 +65,9 @@ end
 if (EXPORT["books"]) then
   Books.init()
   Books.run(Book, "livres", "books")
+end
+
+if (EXPORT["comics"]) then
+  Comics.init()
+  Comics.run(Comic, "bd", "comics")
 end

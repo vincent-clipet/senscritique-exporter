@@ -45,6 +45,63 @@ ruby app/main.rb
 
 ### Format des données
 
+
+<details>
+<summary>movies</summary>
+
 | id | title | sc_url_id | sc_url_name | imdb_id | director | country | rating | status | category | original_title | release_date | duration |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | Bienvenue à Gattaca | 488559 | bienvenue_a_gattaca | tt0119177 | Andrew Niccol | Etats-Unis | 10 | 1 | Film | Gattaca | 1997-24-10 | 106 |
+
+</details>
+
+
+<details>
+<summary>series</summary>
+
+| id | title | sc_url_id | sc_url_name | creator | country | rating | status | category | original_title | release_date | seasons |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | Succession | 32576517 | succession | tt0119177 | Jesse Armstrong | Etats-Unis | 8 | 1 | Série | NULL | 2018-06-03 | 4 |
+
+</details>
+
+
+<details>
+<summary>books</summary>
+
+| id | title | subtitle | sc_url_id | sc_url_name | original_title | author | country | rating | status | isbn | release_date |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2 | Les Enfants de Dune | Le Cycle de Dune, tome 3 | 384226 | les_enfants_de_dune | The Children of Dune | Frank Herbert | Etats-Unis | 9 | 1 | 9782266235822 | 2018-06-03 |
+
+</details>
+
+
+<details>
+<summary>comics</summary>
+
+| id | title | sc_url_id | sc_url_name | original_title | author | illustrator | country | rating | status | category | isbn | release_date |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2 | Appleseed | 17433205 | appleseed | Appurushīdo | Masamune Shirow | Masamune Shirow | NULL | NULL | 3 | Manga | 978-2-8769-5228-7 | 1985-02-01 |
+
+</details>
+
+
+<details>
+<summary>albums</summary>
+
+| id | title | sc_url_id | sc_url_name | artist | rating | status | release_date |
+|---|---|---|---|---|---|---|---|
+| 5 | Ascend | 30723739 | ascend | Pogo | 9 | 1 | 2018-02-22 |
+
+</details>
+
+
+
+<details>
+<summary>videogames</summary>
+
+| id | title | sc_url_id | sc_url_name | developer | publisher | rating | status | category | original_title | release_date |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 33	 | Factorio | 8459949 | factorio | Wube Software LTD. | Wube Software LTD. | 10 | 1 | Jeu | NULL | 2020-08-14 |
+
+</details>

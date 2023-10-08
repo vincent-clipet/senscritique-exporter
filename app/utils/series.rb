@@ -31,46 +31,6 @@ class Series < Senscritique
     end
   end
 
-  # Scrapin' time
-  def self.run()
-    updated = 0
-    created = 0
-    last_page = get_last_page("series")
-
-    (1..last_page).each do | page_number |
-      puts "----- Series - page #{page_number}/#{last_page} -----"
-      page = ratings_for("series", page_number)
-
-      sleep(@@DELAY)
-
-      page.each do |k, v|
-        from_wiki = wiki_for(v[:sc_url_name], v[:sc_url_id])
-        hashed = v.merge(from_wiki)
-
-        old = Serie.where(sc_url_id: v[:sc_url_id]).first
-        if (old) then
-          old.update!(hashed)
-          updated += 1
-          action = "updated"
-        else
-          serie = Serie.create!(hashed)
-          created += 1
-          action = "created"
-        end
-
-        puts "(#{action}) > #{v[:title]}"
-        sleep(@@DELAY)
-      end
-    end
-
-    puts "============================================"
-    puts ">>> #{created} new series"
-    puts ">>> #{updated} updated series"
-    puts "============================================"
-  end
-
-
-
   # @param url_name The name of the item, as displayed in the URL
   # @param url_id The ID of the item, as displayed in the URL
   # @return [Hash] partial Hash containing all wiki info for this item

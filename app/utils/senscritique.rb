@@ -9,9 +9,51 @@ class Senscritique
     @@DELAY = config["http"]["request_delay"]
   end
 
+
+
+  def self.run(model, type)
+    updated = 0
+    created = 0
+    last_page = get_last_page(type)
+
+    (1..last_page).each do | page_number |
+      puts "----- #{type.capitalize} - page #{page_number}/#{last_page} -----"
+      page = ratings_for(type, page_number)
+
+      sleep(@@DELAY)
+
+      page.each do |k, v|
+        from_wiki = wiki_for(v[:sc_url_name], v[:sc_url_id])
+        hashed = v.merge(from_wiki)
+
+        old = model.where(sc_url_id: v[:sc_url_id]).first
+        if (old) then
+          old.update!(hashed)
+          updated += 1
+          action = "updated"
+        else
+          model.create!(hashed)
+          created += 1
+          action = "created"
+        end
+
+        puts "(#{action}) > #{v[:title]}"
+        sleep(@@DELAY)
+      end
+    end
+
+    puts "============================================"
+    puts ">>> #{created} new #{type}"
+    puts ">>> #{updated} updated #{type}"
+    puts "============================================"
+  end
+
+
+
   # @param username Name of the user to scan
   # @return [Integer] The number of the last page in the collection
   def self.get_last_page(type)
+    return 1
     html = Http.get("/#{@@USERNAME}/collection/all/#{type}/all/all/all/all/all/all/list/page-1")
     if html.css(".eipa-page").empty? then # Only 1 page in the collection
       return 1

@@ -13,6 +13,7 @@ export:
   books: true
   comics: true
   albums: true
+  videogames: true
 
 
 ##########################################################################

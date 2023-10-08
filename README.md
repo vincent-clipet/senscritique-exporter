@@ -1,6 +1,6 @@
 # SensCritique Exporter
 
-Script pour exporter votre collection de films depuis SensCritique vers une base de données locale *(SQLite par défaut)*.
+Script pour exporter votre collection de films/séries/libres/BD/albums/jeux depuis SensCritique vers une base de données locale *(SQLite par défaut)*.
 
 <hr>
 
@@ -11,7 +11,7 @@ SensCritique fait miroiter une API depuis bientôt 10 ans, et toujours rien à l
 
 En plus de ça, [l'ancien site](https://old.senscritique.com/) ferme le 30/10/2023, alors qu'il héberge le wiki qui permet d'éditer les oeuvres, qui n'a pas d'équivalent sur le nouveau site. *(le wiki inclut des données non-présentes sur le nouveau site, notamment l'identifiant IMDB pour les films)*
 
-Du coup, script fait-maison pour exporter les films dans une base de données propre, pour éventuellement plus tard les importer sur Letterboxd [*(API publique disponible)*](https://api-docs.letterboxd.com/).
+Du coup, script fait-maison pour tout exporter dans une base de données propre, pour éventuellement plus tard importer les films sur Letterboxd [*(API publique disponible)*](https://api-docs.letterboxd.com/).
 
 <hr>
 

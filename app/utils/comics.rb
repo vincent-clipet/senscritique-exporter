@@ -17,71 +17,40 @@ class Comics < Senscritique
           t.string :title, index: true
           t.integer :sc_url_id, index: true
           t.string :sc_url_name, index: true
-          t.string :author, index: true
           t.string :original_title
+          t.string :author, index: true
+          t.string :illustrator, index: true
+          t.string :country, index: true
           t.integer :rating, index: true
           t.integer :status, default: 0, index: true
+          t.string :category, index: true
+          t.string :isbn
           t.date :release_date
         end
       end
     end
   end
 
-  # Comics don't have a wiki
+  # @param url_name The name of the item, as displayed in the URL
+  # @param url_id The ID of the item, as displayed in the URL
+  # @return [Hash] partial Hash containing all wiki info for this item
   def self.wiki_for(url_name, url_id)
-    return {}
-  end
+    html = Http.get_authentified("/wiki/#{url_name}/#{url_id}")
+    return {} if html.nil? # 301 redirect
 
-  # Need to overwrite this from parent to get more info while scraping,
-  # given that there are no wiki pages for Comics
-  def self.ratings_for(type, page)
-    html = Http.get("/#{@@CONFIG["username"]}/collection/all/#{type}/all/all/all/all/all/all/all/page-#{page}")
-
-    list = html.css(".elco-collection > .elco-collection-list > .elco-collection-item")
-    ret = {}
-
-    # Loop. 18 items per page
-    list.each do | item |
-      # Get sc_url_name & sc_url_id
-      split_url = item.css(".elco-product-detail > .elco-title > a").first['href'].split("/")
-      id = split_url[3]
-
-      hash = {
-        :sc_url_id => id,
-        :sc_url_name => split_url[2],
-        :title => item.at_css(".elco-product-detail > .elco-title > a").text,
-        :rating => nil,
-        :author => item.at_css(".elco-product-detail > .elco-baseline > a").text,
-        :original_title => nil,
-        :release_date => nil
-      }
-
-      potential_release_date = item.at_css(".elco-product-detail > .elco-title > .elco-date")
-      if (potential_release_date) then
-        hash[:release_date] = parse_date(potential_release_date.text&.strip&.tr("()", ""))
-      end
-
-      potential_original_title = item.at_css(".elco-product-detail > .elco-original-title")
-      if (potential_original_title) then
-        hash[:original_title] = potential_original_title.text&.strip
-      end
-
-      potential_rating = item.at_css(".elco-collection-rating.user .elrua-useraction-action > .elrua-useraction-inner")
-      # Only wishlisted
-      if (item.css(".eins-wish-list").any?) then
-        hash[:status] = "wishlisted"
-      # Watched but not rated
-      elsif (item.css(".eins-done").any?)
-        hash[:status] = "watched"
-      # 1 child -> it's a rating
-      elsif (potential_rating.children.size == 1)
-        hash[:status] = "rated"
-        hash[:rating] = potential_rating&.child&.text&.strip&.to_i
-      end
-
-      ret[id] = hash
-    end
-
+    info_list = html.css(".ped-row > .ped-results")
+    ret = {
+      :title => info_list[0].at_css(".ped-results-item > .ped-results-value")&.text&.strip,
+      :sc_url_id => url_id.to_i,
+      :sc_url_name => url_name,
+      :original_title => info_list[1].at_css(".ped-results-item > .ped-results-value")&.text&.strip,
+      :author => info_list[3].at_css(".ped-results-item > .ped-results-value")&.text&.strip,
+      :illustrator => info_list[4].at_css(".ped-results-item > .ped-results-value")&.text&.strip,
+      :country => info_list[11].at_css(".ped-results-item > .ped-results-value")&.text&.strip,
+      :category => info_list[2].at_css(".ped-results-item > .ped-results-value")&.text&.strip,
+      :isbn => info_list[12].at_css(".ped-results-item > .ped-results-value")&.text&.strip,
+      :release_date => parse_date(info_list[6].at_css(".ped-results-item > .ped-results-value")&.text&.strip),
+    }
     return ret
   end
 

@@ -11,14 +11,14 @@ class Senscritique
 
 
 
-  def self.run(model, type)
+  def self.run(model, type_fr, type_en=type_fr)
     updated = 0
     created = 0
-    last_page = get_last_page(type)
+    last_page = @@CONFIG["debug"]["page1_only"] ? 1 : get_last_page(type_fr)
 
     (1..last_page).each do | page_number |
-      puts "----- #{type.capitalize} - page #{page_number}/#{last_page} -----"
-      page = ratings_for(type, page_number)
+      puts "----- #{type_en.capitalize} - page #{page_number}/#{last_page} -----"
+      page = ratings_for(type_fr, page_number)
 
       sleep(@@DELAY)
 
@@ -43,8 +43,8 @@ class Senscritique
     end
 
     puts "============================================"
-    puts ">>> #{created} new #{type}"
-    puts ">>> #{updated} updated #{type}"
+    puts ">>> #{created} new #{type_en}"
+    puts ">>> #{updated} updated #{type_en}"
     puts "============================================"
   end
 

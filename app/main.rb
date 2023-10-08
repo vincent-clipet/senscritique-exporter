@@ -4,6 +4,7 @@ require 'active_model'
 require_relative 'utils/senscritique'
 require_relative 'utils/movies'
 require_relative 'utils/series'
+require_relative 'utils/books'
 
 
 
@@ -58,4 +59,9 @@ end
 if (EXPORT["series"]) then
   Series.init()
   Series.run(Serie, "series")
+end
+
+if (EXPORT["books"]) then
+  Books.init()
+  Books.run(Book, "livres", "books")
 end

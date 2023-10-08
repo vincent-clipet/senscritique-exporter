@@ -22,11 +22,11 @@ COOKIES = CONFIG["cookies"].map { |key, value| "#{key}=#{value}" } .join('; ')
 ##############
 
 def database_exists?
-	ActiveRecord::Base.connection
+  ActiveRecord::Base.connection
 rescue ActiveRecord::NoDatabaseError
-	false
+  false
 else
-	true
+  true
 end
 
 ActiveRecord::Base.establish_connection(CONFIG["database"])

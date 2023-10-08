@@ -6,6 +6,7 @@ require_relative 'utils/movies'
 require_relative 'utils/series'
 require_relative 'utils/books'
 require_relative 'utils/comics'
+require_relative 'utils/albums'
 
 
 
@@ -70,4 +71,9 @@ end
 if (EXPORT["comics"]) then
   Comics.init()
   Comics.run(Comic, "bd", "comics")
+end
+
+if (EXPORT["albums"]) then
+  Albums.init()
+  Albums.run(Album, "albums")
 end

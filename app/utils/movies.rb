@@ -37,12 +37,11 @@ class Movies < Senscritique
 	def self.run()
 		movies_updated = 0
 		movies_created = 0
-    movies_skipped = 0
 		last_page = get_last_page("films")
 
 		(1..last_page).each do | page_number |
 			puts "----- Movies - page #{page_number}/#{last_page} -----"
-			page = ratings_for(page_number)
+			page = ratings_for("films", page_number)
 
 			sleep(@@DELAY)
 
@@ -52,17 +51,9 @@ class Movies < Senscritique
 
 				old_movie = Movie.where(sc_url_id: v[:sc_url_id]).first
 				if (old_movie) then
-          # Nothing changed, don't bother updating DB
-
-          if (old_movie.attributes.except!("id").symbolize_keys == hashed_movie)
-            action = "skipped"
-            movies_skipped += 1
-          # Movie changed, update DB
-          else
-					  old_movie.update!(hashed_movie)
-					  movies_updated += 1
-            action = "updated"
-          end
+          old_movie.update!(hashed_movie)
+          movies_updated += 1
+          action = "updated"
 				else
 					movie = Movie.create!(hashed_movie)
 					movies_created += 1
@@ -102,49 +93,6 @@ class Movies < Senscritique
 			:release_date => parse_date(info_list[6].at_css(".ped-results-item > .ped-results-value")&.text&.strip),
 			:duration => info_list[11].at_css(".ped-results-item > .ped-results-value")&.text&.strip&.split(" ")&.first&.to_i
 		}
-		return ret
-	end
-
-
-
-	# @param username Name of the user to scan
-	# @param page ID of the collection
-	# @return [Hash] partial movie Hash containing rating & status
-	def self.ratings_for(page)
-		html = Http.get("/#{@@CONFIG["username"]}/collection/all/films/all/all/all/all/all/all/all/page-#{page}")
-
-		movie_list = html.css(".elco-collection > .elco-collection-list > .elco-collection-item")
-		ret = {}
-
-		# Loop. 18 movies per page
-		movie_list.each do | movie |
-			# Get sc_url_name & sc_url_id
-			split_url = movie.css(".elco-product-detail > .elco-title > a").first['href'].split("/")
-			id = split_url[3]
-
-			movie_hash = {
-				:sc_url_id => id,
-				:sc_url_name => split_url[2],
-				:title => movie.css(".elco-product-detail > .elco-title > a").text,
-        :rating => nil
-			}
-
-			potential_rating = movie.at_css(".elco-collection-rating.user .elrua-useraction-action > .elrua-useraction-inner")
-			# Only wishlisted
-			if (movie.css(".eins-wish-list").any?) then
-				movie_hash[:status] = "wishlisted"
-			# Watched but not rated
-			elsif (movie.css(".eins-done").any?)
-				movie_hash[:status] = "watched"
-			# 1 child -> it's a rating
-			elsif (potential_rating.children.size == 1)
-				movie_hash[:status] = "rated"
-				movie_hash[:rating] = potential_rating&.child&.text&.strip&.to_i
-			end
-
-			ret[id] = movie_hash
-		end
-
 		return ret
 	end
 

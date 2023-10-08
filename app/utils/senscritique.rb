@@ -30,4 +30,44 @@ class Senscritique
 		return Date.strptime(date_str, '%d/%m/%Y')
 	end
 
+	# @param page ID of the collection
+	# @return [Hash] partial Hash containing rating & status
+	def self.ratings_for(type, page)
+		html = Http.get("/#{@@CONFIG["username"]}/collection/all/#{type}/all/all/all/all/all/all/all/page-#{page}")
+
+		list = html.css(".elco-collection > .elco-collection-list > .elco-collection-item")
+		ret = {}
+
+		# Loop. 18 items per page
+		list.each do | item |
+			# Get sc_url_name & sc_url_id
+			split_url = item.css(".elco-product-detail > .elco-title > a").first['href'].split("/")
+			id = split_url[3]
+
+			hash = {
+				:sc_url_id => id,
+				:sc_url_name => split_url[2],
+				:title => item.css(".elco-product-detail > .elco-title > a").text,
+        :rating => nil
+			}
+
+			potential_rating = item.at_css(".elco-collection-rating.user .elrua-useraction-action > .elrua-useraction-inner")
+			# Only wishlisted
+			if (item.css(".eins-wish-list").any?) then
+				hash[:status] = "wishlisted"
+			# Watched but not rated
+			elsif (item.css(".eins-done").any?)
+				hash[:status] = "watched"
+			# 1 child -> it's a rating
+			elsif (potential_rating.children.size == 1)
+				hash[:status] = "rated"
+				hash[:rating] = potential_rating&.child&.text&.strip&.to_i
+			end
+
+			ret[id] = hash
+		end
+
+		return ret
+	end
+
 end

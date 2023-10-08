@@ -14,7 +14,7 @@ class Senscritique
   def self.run(model, type_fr, type_en=type_fr)
     updated = 0
     created = 0
-    last_page = @@CONFIG["debug"]["page_limit"] >= 0 ? @@CONFIG["debug"]["page_limit"] : get_last_page(type_fr)
+    last_page = @@CONFIG["debug"]["page_limit"] = 0 ? get_last_page(type_fr) : @@CONFIG["debug"]["page_limit"]
 
     (1..last_page).each do | page_number |
       puts "----- #{type_en.capitalize} - page #{page_number}/#{last_page} -----"
@@ -53,7 +53,6 @@ class Senscritique
   # @param username Name of the user to scan
   # @return [Integer] The number of the last page in the collection
   def self.get_last_page(type)
-    return 1
     html = Http.get("/#{@@USERNAME}/collection/all/#{type}/all/all/all/all/all/all/list/page-1")
     if html.css(".eipa-page").empty? then # Only 1 page in the collection
       return 1

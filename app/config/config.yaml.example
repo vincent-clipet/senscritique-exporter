@@ -6,6 +6,18 @@ cookies:
   SC_AUTH: '' # 32-char hexadecimal string
   SC_AUTH_ID: '' # very long text string
 
+# Pick which categories you want to export to the database (true/false)
+export:
+  movies: true
+  series: true
+  books: true
+  comics: true
+  albums: true
+
+
+##########################################################################
+
+
 # HTTP requests parameters
 http:
   request_delay: 0.2 # delay in seconds between request, we don't want to get IP-banned !
@@ -15,7 +27,5 @@ database:
   adapter: 'sqlite3'
   database: './db/sc_export.db'
 
-# Pick which categories you want to export to the database
-export:
-  movies: true
-  series: true
+debug:
+  page_limit: 0 # will only scrape the first X pages. 0 = ignored

@@ -56,7 +56,7 @@ Http.init(COOKIES)
 
 if (EXPORT["movies"]) then
   Movies.init()
-  Movies.run(Movie, "movies")
+  Movies.run(Movie, "films", "movies")
 end
 
 if (EXPORT["series"]) then

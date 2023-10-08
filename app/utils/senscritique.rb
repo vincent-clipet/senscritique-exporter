@@ -14,7 +14,7 @@ class Senscritique
   def self.run(model, type_fr, type_en=type_fr)
     updated = 0
     created = 0
-    last_page = @@CONFIG["debug"]["page1_only"] ? 1 : get_last_page(type_fr)
+    last_page = @@CONFIG["debug"]["page_limit"] >= 0 ? @@CONFIG["debug"]["page_limit"] : get_last_page(type_fr)
 
     (1..last_page).each do | page_number |
       puts "----- #{type_en.capitalize} - page #{page_number}/#{last_page} -----"

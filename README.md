@@ -43,6 +43,12 @@ ruby app/main.rb
 
 <hr>
 
+### Images
+
+![Screenshot_1](./docs/assets/screenshot_1.png)
+
+<hr>
+
 ### Format des données
 
 

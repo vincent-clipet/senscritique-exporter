@@ -66,11 +66,12 @@ class Senscritique
   # @param date_str [String] Date string from Senscritique wiki page
   # @return [Date, nil]
   def self.parse_date(date_str)
-    return nil if date_str.nil?
+    return nil if date_str.nil? or date_str.empty?
     return Date.strptime(date_str, '%Y') if date_str =~ /^\d{4}$/ # sometimes, date is just a year
     return Date.strptime(date_str, '%m/%Y') if date_str =~ /^\d{2}\/\d{4}$/ # sometimes, there's also a month
     return Date.strptime(date_str, '%Y-%m-%d') if date_str =~ /^\d{4}\-\d{2}\-\d{2}$/ # from <time> HTML element
-    return Date.strptime(date_str, '%d/%m/%Y')
+    return Date.strptime(date_str, '%d/%m/%Y') if date_str =~ /^\d{2}\/\d{2}\/\d{4}$/ # usual format
+    return nil
   end
 
   # @param page ID of the collection

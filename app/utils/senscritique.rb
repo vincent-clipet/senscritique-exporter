@@ -15,7 +15,6 @@ class Senscritique
     updated = 0
     created = 0
     last_page = @@CONFIG["debug"]["page_limit"] == 0 ? get_last_page(type_fr) : @@CONFIG["debug"]["page_limit"]
-    puts last_page
 
     (1..last_page).each do | page_number |
       puts "----- #{type_en.capitalize} - page #{page_number}/#{last_page} -----"

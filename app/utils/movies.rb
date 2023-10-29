@@ -28,6 +28,7 @@ class Movies < Senscritique
           t.string :original_title
           t.date :release_date
           t.integer :duration
+          t.date :watched_on
         end
       end
     end
@@ -54,6 +55,20 @@ class Movies < Senscritique
       :duration => info_list[11].at_css(".ped-results-item > .ped-results-value")&.text&.strip&.split(" ")&.first&.to_i
     }
     return ret
+  end
+
+  # @param url_name The name of the item, as displayed in the URL
+  # @param url_id The ID of the item, as displayed in the URL
+  # @return [Hash] partial Hash containing all 'public' info for this item
+  def self.page_for(url_name, url_id)
+    html = Http.get_authentified("/film/#{url_name}/#{url_id}")
+
+    last_watch_text = html.css(".pvi-product-done > div > span")[1]&.text
+    return nil if last_watch_text !~ /le .*/ # invalid date
+
+    split = last_watch_text.split(" ")
+    date = parse_date("#{split[3]}-#{@@MONTH_REPLACEMENT[split[2]]}-#{split[1]}")
+    return { :watched_on => date }
   end
 
 end

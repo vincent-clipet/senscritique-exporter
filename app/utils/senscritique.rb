@@ -14,30 +14,48 @@ class Senscritique
   def self.run(model, type_fr, type_en=type_fr)
     updated = 0
     created = 0
+    skipped = 0
     last_page = @@CONFIG["debug"]["page_limit"] == 0 ? get_last_page(type_fr) : @@CONFIG["debug"]["page_limit"]
 
     (1..last_page).each do | page_number |
       puts "----- #{type_en.capitalize} - page #{page_number}/#{last_page} -----"
       page = ratings_for(type_fr, page_number)
-
       sleep(@@DELAY)
 
-      page.each do |k, v|
-        from_wiki = wiki_for(v[:sc_url_name], v[:sc_url_id])
-        hashed = v.merge(from_wiki)
+      page.each do | sc_url_id, rating_hash |
+        hashed = {}
 
-        old = model.where(sc_url_id: v[:sc_url_id]).first
+        # Get the item in DB
+        old = model.where(sc_url_id: rating_hash[:sc_url_id]).first
+
+        # Get the last watch date
+        from_page = page_for(rating_hash[:sc_url_name], rating_hash[:sc_url_id])
+        hashed.merge!(from_page) unless from_page.nil?
+
+        # Item already exists in DB
         if (old) then
-          old.update!(hashed)
-          updated += 1
-          action = "updated"
+          # Nothing changed, skip updating DB
+          if (old &&
+            rating_hash[:status] == old.status && rating_hash[:rating] == old.rating && # rating not changed
+            (from_page == nil || from_page[:watched_on] == old.watched_on)) then # no watch date or watch date not changed
+            skipped += 1
+            action = "skipped"
+          # Something changed, update DB
+          else
+            from_wiki = wiki_for(rating_hash[:sc_url_name], rating_hash[:sc_url_id])
+            hashed.merge!(rating_hash.merge(from_wiki))
+            old.update!(hashed)
+            updated += 1
+            action = "updated"
+          end
+        # New item for DB
         else
           model.create!(hashed)
           created += 1
           action = "created"
         end
 
-        puts "(#{action}) > #{v[:title]}"
+        puts "(#{action}) > #{rating_hash[:title]}"
         sleep(@@DELAY)
       end
     end
@@ -45,6 +63,7 @@ class Senscritique
     puts "============================================"
     puts ">>> #{created} new #{type_en}"
     puts ">>> #{updated} updated #{type_en}"
+    puts ">>> #{skipped} skipped #{type_en}"
     puts "============================================"
   end
 
@@ -105,12 +124,38 @@ class Senscritique
       elsif (potential_rating.children.size == 1)
         hash[:status] = "rated"
         hash[:rating] = potential_rating&.child&.text&.strip&.to_i
+      # Should not happen, but sometimes does (unrated but watched movies for example)
+      else
+        hash[:status] = "watched"
       end
 
       ret[id] = hash
     end
 
     return ret
+  end
+
+
+
+  @@MONTH_REPLACEMENT = {
+    "janvier" => "01",
+    "février" => "02",
+    "mars" => "03",
+    "avril" => "04",
+    "mai" => "05",
+    "juin" => "06",
+    "juillet" => "07",
+    "août" => "08",
+    "septembre" => "09",
+    "octobre" => "10",
+    "novembre" => "11",
+    "décembre" => "12"
+  }
+  # @param url_name The name of the item, as displayed in the URL
+  # @param url_id The ID of the item, as displayed in the URL
+  # @return [Hash] partial Hash containing all 'public' info for this item
+  def self.page_for(url_name, url_id)
+    return nil
   end
 
 end

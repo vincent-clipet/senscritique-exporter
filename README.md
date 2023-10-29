@@ -55,9 +55,9 @@ ruby app/main.rb
 <details>
 <summary>movies</summary>
 
-| id | title | sc_url_id | sc_url_name | imdb_id | director | country | rating | status | category | original_title | release_date | duration |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | Bienvenue à Gattaca | 488559 | bienvenue_a_gattaca | tt0119177 | Andrew Niccol | Etats-Unis | 10 | 1 | Film | Gattaca | 1997-24-10 | 106 |
+| id | title | sc_url_id | sc_url_name | imdb_id | director | country | rating | status | category | original_title | release_date | duration | watched_on |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | Bienvenue à Gattaca | 488559 | bienvenue_a_gattaca | tt0119177 | Andrew Niccol | Etats-Unis | 10 | 1 | Film | Gattaca | 1997-24-10 | 106 | 2023-10-29 |
 
 </details>
 

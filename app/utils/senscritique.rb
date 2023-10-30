@@ -7,6 +7,7 @@ class Senscritique
     @@CONFIG = config
     @@USERNAME = config["username"]
     @@DELAY = config["http"]["request_delay"]
+    @@SKIP_WATCH_DATE = config["debug"]["skip_watch_date"]
   end
 
 
@@ -29,8 +30,10 @@ class Senscritique
         old = model.where(sc_url_id: rating_hash[:sc_url_id]).first
 
         # Get the last watch date
-        from_page = page_for(rating_hash[:sc_url_name], rating_hash[:sc_url_id])
-        hashed.merge!(from_page) unless from_page.nil?
+        unless @@SKIP_WATCH_DATE then
+          from_page = page_for(rating_hash[:sc_url_name], rating_hash[:sc_url_id])
+          hashed.merge!(from_page) unless from_page.nil?
+        end
 
         # Item already exists in DB
         if (old) then

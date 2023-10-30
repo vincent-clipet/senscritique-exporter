@@ -30,3 +30,4 @@ database:
 
 debug:
   page_limit: 0 # will only scrape the first X pages. 0 = ignored
+  skip_watch_date: false # will skip scraping the last watch date of a movie

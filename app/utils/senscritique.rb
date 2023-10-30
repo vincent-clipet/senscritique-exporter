@@ -53,6 +53,8 @@ class Senscritique
           end
         # New item for DB
         else
+          from_wiki = wiki_for(rating_hash[:sc_url_name], rating_hash[:sc_url_id])
+          hashed.merge!(rating_hash.merge(from_wiki))
           model.create!(hashed)
           created += 1
           action = "created"

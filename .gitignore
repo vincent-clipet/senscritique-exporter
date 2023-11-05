@@ -61,5 +61,7 @@ build-iPhoneSimulator/
 
 /lab
 /app/db/*.db*
+/app/db/*.csv*
 /app/config/*.yaml
 !/app/config/database.yaml
+.vscode/

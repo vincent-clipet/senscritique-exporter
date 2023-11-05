@@ -39,12 +39,6 @@ ActiveRecord::Base.establish_connection(CONFIG["database"])
 
 
 
-###################
-# SCHEMA / MODELS #
-###################
-
-
-
 
 
 #######
